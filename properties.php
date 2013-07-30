@@ -23,6 +23,28 @@ class ManageProperties
 
 	function __construct()
 	{
+        global $wpdb, $table_prefix;
+        $sql = "CREATE TABLE IF NOT EXISTS `".$table_prefix."properties` (
+                  `id` INT NOT NULL AUTO_INCREMENT ,
+                  `address` VARCHAR(255) NULL ,
+                  `city` VARCHAR(255) NULL ,
+                  `state` VARCHAR(255) NULL ,
+                  `zip` VARCHAR(10) NULL ,
+                  `price` DECIMAL NULL ,
+                  `description` TEXT, 
+                  `status` VARCHAR(45)
+                  PRIMARY KEY (`id`) );";
+        $wpdb->query($sql);
+
+        $sql = "CREATE  TABLE `".$table_prefix."property_images` (
+          `id` INT NOT NULL AUTO_INCREMENT ,
+          `property_id` INT NOT NULL ,
+          `image_url` VARCHAR(255) NOT NULL ,
+          `main_image` TINYINT NOT NULL,
+          PRIMARY KEY (`id`) );";
+        $wpdb->query($sql);
+        
+
 		//hook up with Wordpress and make sweet love...
 		add_action('admin_enqueue_scripts', array(&$this,'load_scripts' ));
 		add_action('admin_menu', array(&$this,'adminMenu'));
@@ -111,25 +133,6 @@ class ManageProperties
 	function adminMenu()
 	{
 		global $wpdb, $table_prefix;
-		$sql = "CREATE TABLE IF NOT EXISTS `".$table_prefix."properties` (
-				  `id` INT NOT NULL AUTO_INCREMENT ,
-				  `address` VARCHAR(255) NULL ,
-				  `city` VARCHAR(255) NULL ,
-				  `state` VARCHAR(255) NULL ,
-				  `zip` VARCHAR(10) NULL ,
-				  `price` DECIMAL NULL ,
-                  `description` TEXT, 
-                  `status` VARCHAR(45)
-				  PRIMARY KEY (`id`) );";
-		$wpdb->query($sql);
-
-		$sql = "CREATE  TABLE `".$table_prefix."property_images` (
-		  `id` INT NOT NULL AUTO_INCREMENT ,
-		  `property_id` INT NOT NULL ,
-		  `image_url` VARCHAR(255) NOT NULL ,
-          `main_image` TINYINT NOT NULL,
-		  PRIMARY KEY (`id`) );";
-		$wpdb->query($sql);
 		
         wp_register_script( 'boostrap_script', plugins_url('bootstrap/js/bootstrap.js', __FILE__) );
         wp_register_script( 'holder_script', plugins_url('bootstrap/js/holder.js', __FILE__) );
