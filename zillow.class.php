@@ -96,13 +96,13 @@ class Zillow {
 		return $this->result->address;
 	}
 
-	public function getNeighborhood(){
-		return $this->result->localRealEstate->region->attributes()['name'];
-	}
+	//public function getNeighborhood(){
+	//	return $this->result->localRealEstate->region->attributes()['name'];
+	//}
 
-	public function getNeighborhoodId(){
-		return $this->result->localRealEstate->region->attributes()['id'];
-	}
+	//public function getNeighborhoodId(){
+	//	return $this->result->localRealEstate->region->attributes()['id'];
+	//}
 
 	public function getNeighborhoodLinkOverview(){
 		return $this->result->localRealEstate->region->links->overview;
