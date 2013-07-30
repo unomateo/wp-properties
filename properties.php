@@ -24,7 +24,7 @@ class ManageProperties
 	function __construct()
 	{
         global $wpdb, $table_prefix;
-        $sql = "CREATE TABLE IF NOT EXISTS `{$table_prefix}wp_properties` (
+        $sql = "CREATE TABLE IF NOT EXISTS `{$table_prefix}properties` (
                 `id` INT NOT NULL AUTO_INCREMENT ,
                 `address` VARCHAR(255) NULL ,
                 `city` VARCHAR(255) NULL ,
