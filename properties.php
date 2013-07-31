@@ -57,7 +57,7 @@ class ManageProperties
 	}
 
 	function load_scripts(){
-		wp_register_style( 'prefix-style', plugins_url('bootstrap/css/bootstrap.css', __FILE__) );
+		//wp_register_style( 'prefix-style', plugins_url('bootstrap/css/bootstrap.css', __FILE__) );
         
 		if(function_exists( 'wp_enqueue_media' )){
 		    wp_enqueue_media();
@@ -222,6 +222,30 @@ class ManageProperties
        		$data['city'] = $_POST['city'];
        		$data['state'] = $_POST['state'];
        		$data['zip'] = $_POST['zipcode'];
+
+            $propertyObj = new Property();
+            $propertyObj->address = $data['address'];
+            $propertyObj->city = $data['city'];
+            $propertyObj->state = $data['state'];
+            $propertyObj->deepSearchResults();
+            $data['neighborhoodLink'] = $propertyObj->getNeighborhoodLinkOverview();
+            $data['useCode'] = $propertyObj->getUseCode();
+            $data['fipsCounty'] = $propertyObj->getFipsCounty();
+            $data['taxAssessmentYear'] = $propertyObj->getTaxAssessmentYear();
+            $data['taxAssessment'] = $propertyObj->getTaxAssessment();
+            $data['yearBuilt'] = $propertyObj->getYearBuilt();
+            $data['lotSizeSqFt'] = $propertyObj->getLotSizeSqFt();
+            $data['finishedSqFt'] = $propertyObj->getFinishedSqFt();
+            $data['bathrooms'] = $propertyObj->getBathrooms();
+            $data['bedrooms'] = $propertyObj->getBedrooms();
+            $data['totalRooms'] = $propertyObj->getTotalRooms();
+            //$data['neighborhoodName'] = $propertyObj->getYearBuilt();
+            $data['zpid'] = $propertyObj->getzpid();
+            $data['price'] = $propertyObj->getLastSoldPrice();
+            //$data['homeDetailsLink'] = $propertyObj->getHomeDetailPageLink();
+            //$data['mapThisHome'] = $propertyObj->getMapThisHomeLink();
+            //$data['comparables'] = $propertyObj->getComparablesLink();
+
        		$wpdb->insert( $table_prefix."properties", $data);
 
        		$property_id = $wpdb->insert_id;
@@ -242,8 +266,15 @@ class ManageProperties
             $data['description'] = $_POST['description'];
             $data['status'] = $_POST['status'];
             $data['price'] = $_POST['price'];
+            $data['bedrooms'] = $_POST['bedrooms'];
+            $data['bathrooms'] = $_POST['bathrooms'];
+            $data['yearBuilt'] = $_POST['yearBuilt'];
+            $data['lotSizeSqFt'] = $_POST['lotSizeSqFt'];
+            $data['finishedSqFt'] = $_POST['finishedSqFt'];
             $where['id'] = $property_id = $_POST['id'];
             $wpdb->update( $table_prefix."properties", $data, $where);
+        
+
 
             ?>
             <META http-equiv="refresh" content="0;URL=?page=edit_property&property_id=<?php echo $property_id?>">
@@ -262,10 +293,6 @@ class ManageProperties
 		$id = mysql_real_escape_string($_GET['property_id']);
 		$sql = "SELECT * FROM ".$table_prefix."properties WHERE id = {$id}";
 		$property = $wpdb->get_row($sql);
-		$propertyObj = new Property();
-		$propertyObj->address = $prop->address;
-		$propertyObj->city = $prop->city;
-		$propertyObj->state = $prop->state;
 
         $thumbnails = $wpdb->get_results("SELECT * FROM {$table_prefix}property_images WHERE property_id = {$id}");
         $main_image = null;
@@ -275,8 +302,6 @@ class ManageProperties
                 break;
             }
         }
-        
-		$propertyObj->deepSearchResults();
 		
 		include(PLUGINPATH . "/views/edit.php");
 	}
@@ -342,8 +367,10 @@ class Property_List extends WP_List_Table {
             	$edit = "<div><a href='?page=edit_property&property_id=".$item['id']."'>Edit</a></div>";
             	return ucfirst($item[$column_name]).$edit;
             case 'state':
-            	return strtoupper($item[$column_name]);
+            	return strtoUpper($item[$column_name]);
             case 'city':
+                return ucfirst(strtoLower($item[$column_name]));
+            case 'status':
                 return $item[$column_name];
             default:
                 return print_r($item,true); //Show the whole array for troubleshooting purposes
@@ -419,7 +446,8 @@ class Property_List extends WP_List_Table {
             'cb'        => '<input type="checkbox" />', //Render a checkbox instead of text
             'address'   => 'Address',
             'city'      => 'City',
-            'state'     => 'State'
+            'state'     => 'State',
+            'status'    => 'Status'
         );
         return $columns;
     }
@@ -442,7 +470,8 @@ class Property_List extends WP_List_Table {
         $sortable_columns = array(
             'address'     => array('address',false),     //true means it's already sorted
             'city'    => array('city',false),
-            'state'  => array('state',false)
+            'state'  => array('state',false),
+            'status' => array('status', false)
         );
         return $sortable_columns;
     }

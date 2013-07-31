@@ -91,7 +91,9 @@ class Zillow {
 	public function getComparablesLink(){
 		return $this->result->links->comparables;
 	}
-
+	/**
+	*
+	*/
 	public function getAddress(){
 		return $this->result->address;
 	}
