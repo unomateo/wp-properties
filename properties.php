@@ -24,16 +24,31 @@ class ManageProperties
 	function __construct()
 	{
         global $wpdb, $table_prefix;
-        $sql = "CREATE TABLE IF NOT EXISTS `{$table_prefix}properties` (
-                `id` INT NOT NULL AUTO_INCREMENT ,
-                `address` VARCHAR(255) NULL ,
-                `city` VARCHAR(255) NULL ,
-                `state` VARCHAR(255) NULL ,
-                `zip` VARCHAR(10) NULL ,
-                `price` DECIMAL NULL ,
-                `description` TEXT, 
-                `status` VARCHAR(45),
-                PRIMARY Key (`id`));";
+        $sql = "
+        CREATE TABLE `{$table_prefix}properties` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `address` varchar(255) DEFAULT NULL,
+          `city` varchar(255) DEFAULT NULL,
+          `state` varchar(255) DEFAULT NULL,
+          `zip` varchar(10) DEFAULT NULL,
+          `price` decimal(10,0) DEFAULT NULL,
+          `description` text,
+          `status` varchar(45) DEFAULT NULL,
+          `neighborhoodLink` varchar(255) DEFAULT NULL,
+          `useCode` varchar(45) DEFAULT NULL,
+          `FipsCounty` varchar(45) DEFAULT NULL,
+          `taxAssessmentYear` int(11) DEFAULT NULL,
+          `taxAssessment` double DEFAULT NULL,
+          `yearBuilt` int(11) DEFAULT NULL,
+          `lotSizeSqFt` int(11) DEFAULT NULL,
+          `finishedSqFt` int(11) DEFAULT NULL,
+          `bathrooms` tinyint(4) DEFAULT NULL,
+          `bedrooms` tinyint(4) DEFAULT NULL,
+          `totalRooms` int(11) DEFAULT NULL,
+          `neighborhoodName` varchar(255) DEFAULT NULL,
+          `zpid` int(11) DEFAULT NULL,
+          PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=latin1";
         $wpdb->query($sql);
 
         $sql = "CREATE  TABLE `".$table_prefix."property_images` (
